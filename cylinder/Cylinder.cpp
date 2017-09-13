@@ -16,7 +16,7 @@ int main()
   // This creates a polygonal cylinder model with eight circumferential facets.
   //
   vtkCylinderSource *cylinder = vtkCylinderSource::New();
-  cylinder->SetResolution(8);
+  cylinder->SetResolution(8);//ÖùÌåµÄµ×±ß±ßÊı
 
   // The mapper is responsible for pushing the geometry into the graphics
   // library. It may also do color mapping, if scalars or other attributes
