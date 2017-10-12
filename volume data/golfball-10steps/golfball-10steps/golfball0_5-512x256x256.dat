@@ -1,0 +1,10 @@
+# This dataset has been provided by VisCG, University of Muenster, Germany.
+# More datasets can be found at http://voreen.uni-muenster.de
+Resolution:     512 256 256
+SliceThickness: 1.0 1.0 1.0
+Format:         UCHAR
+NbrTags:        0
+ObjectType:     TEXTURE_VOLUME_OBJECT
+GridType:       EQUIDISTANT
+ObjectModel:	I
+ObjectFileName: golfball0_5-512x256x256.raw
