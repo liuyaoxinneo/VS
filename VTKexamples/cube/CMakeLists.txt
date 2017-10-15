@@ -7,6 +7,7 @@ if(POLICY CMP0053)
 endif()
 
 PROJECT (DataManipulation)
+
 find_package(VTK REQUIRED)
 vtk_module_config(VTK
   vtkCommonCore
