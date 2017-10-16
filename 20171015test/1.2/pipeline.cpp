@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
 	vtkSmartPointer<vtkMarchingCubes> marchingCubes =
 		vtkSmartPointer<vtkMarchingCubes>::New();
 	marchingCubes->SetInputConnection(reader->GetOutputPort());
-	marchingCubes->SetValue(0, 500);
+	marchingCubes->SetValue(0, 1500);//（0，1500）：显示骨骼，（0，500）：显示面孔
 
 	//将生成的等值面数据进行Mapper
 	vtkSmartPointer<vtkPolyDataMapper> mapper =
