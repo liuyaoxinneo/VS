@@ -2,7 +2,9 @@
 #include <vtkImageData.h>
 #include <vtkStructuredPoints.h>
 #include <vtkStructuredPointsReader.h>
-#include <vtkVolumeRayCastCompositeFunction.h>
+#include <vtkVolumeRayCastCompositeFunction.h>//三种RayCast方法的头文件也要加上，否则无法使用
+#include <vtkVolumeRayCastIsosurfaceFunction.h>
+#include <vtkVolumeRayCastMIPFunction.h>
 #include <vtkGPUVolumeRayCastMapper.h>
 #include <vtkVolumeRayCastMapper.h>
 #include <vtkColorTransferFunction.h>
@@ -28,20 +30,34 @@ int main(int argc, char *argv[])
 	cast->SetInputConnection(reader->GetOutputPort());
 	cast->SetOutputScalarTypeToUnsignedShort();
 	cast->Update();
-
+	
+	//1：Alpha合成投影函数
 	vtkSmartPointer<vtkVolumeRayCastCompositeFunction> rayCastFun =
 		vtkSmartPointer<vtkVolumeRayCastCompositeFunction>::New();
+	//2：最大密度投影函数
+	//vtkSmartPointer<vtkVolumeRayCastMIPFunction> rayCastFun =
+	//	vtkSmartPointer<vtkVolumeRayCastMIPFunction>::New();
+	//3:等值面绘制函数
+	//vtkSmartPointer<vtkVolumeRayCastIsosurfaceFunction> rayCastFun =
+	//	vtkSmartPointer<vtkVolumeRayCastIsosurfaceFunction>::New();
+	//rayCastFun->SetIsoValue(100);
 
-	vtkSmartPointer<vtkVolumeRayCastMapper> volumeMapper =
-		vtkSmartPointer<vtkVolumeRayCastMapper>::New();
+	//1:非GPU加速
+	//vtkSmartPointer<vtkVolumeRayCastMapper> volumeMapper =
+	//	vtkSmartPointer<vtkVolumeRayCastMapper>::New();
+	//volumeMapper->SetInputConnection(reader->GetOutputPort());
+	//volumeMapper->SetVolumeRayCastFunction(rayCastFun);
+	//2：GPU加速的光线投影--不用设置SetVolumeRayCastFunction
+	vtkSmartPointer<vtkGPUVolumeRayCastMapper> volumeMapper =
+		vtkSmartPointer<vtkGPUVolumeRayCastMapper>::New();
 	volumeMapper->SetInputConnection(reader->GetOutputPort());
-	volumeMapper->SetVolumeRayCastFunction(rayCastFun);
 
-	//设置光线采样距离
-	//volumeMapper->SetSampleDistance(volumeMapper->GetSampleDistance()*4);
-	//设置图像采样步长
-	//volumeMapper->SetAutoAdjustSampleDistances(0);
-	//volumeMapper->SetImageSampleDistance(4);
+
+	//设置光线采样距离--纵向采样距离
+	volumeMapper->SetSampleDistance(0.5);//vtkVolumeRayCastMapper默认采样步长为1
+	//设置图像采样步长--平面采样分辨率,每个像素对应多少条光线
+	//volumeMapper->SetAutoAdjustSampleDistances(0);//默认为开启，方便缩放时的渲染时的缩放速度，若要设置图像采样距离则必须先关闭
+	//volumeMapper->SetImageSampleDistance(4);//16个像素--1条光线
 
 	vtkSmartPointer<vtkVolumeProperty> volumeProperty =
 		vtkSmartPointer<vtkVolumeProperty>::New();
@@ -69,7 +85,7 @@ int main(int argc, char *argv[])
 	volumeGradientOpacity->AddPoint(10, 0.0);
 	volumeGradientOpacity->AddPoint(90, 0.5);
 	volumeGradientOpacity->AddPoint(100, 1.0);
-	volumeProperty->SetGradientOpacity(volumeGradientOpacity);//设置梯度不透明度效果对比
+	//volumeProperty->SetGradientOpacity(volumeGradientOpacity);//设置梯度不透明度效果对比
 
 	vtkSmartPointer<vtkColorTransferFunction> color =
 		vtkSmartPointer<vtkColorTransferFunction>::New();
