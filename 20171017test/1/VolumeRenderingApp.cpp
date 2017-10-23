@@ -43,14 +43,14 @@ int main(int argc, char *argv[])
 	//rayCastFun->SetIsoValue(100);
 
 	//1:非GPU加速
-	vtkSmartPointer<vtkVolumeRayCastMapper> volumeMapper =
-		vtkSmartPointer<vtkVolumeRayCastMapper>::New();
-	volumeMapper->SetInputConnection(reader->GetOutputPort());
-	volumeMapper->SetVolumeRayCastFunction(rayCastFun);
-	//2：GPU加速的光线投影--不用设置SetVolumeRayCastFunction
-	//vtkSmartPointer<vtkGPUVolumeRayCastMapper> volumeMapper =
-	//	vtkSmartPointer<vtkGPUVolumeRayCastMapper>::New();
+	//vtkSmartPointer<vtkVolumeRayCastMapper> volumeMapper =
+	//	vtkSmartPointer<vtkVolumeRayCastMapper>::New();
 	//volumeMapper->SetInputConnection(reader->GetOutputPort());
+	//volumeMapper->SetVolumeRayCastFunction(rayCastFun);
+	//2：GPU加速的光线投影--不用设置SetVolumeRayCastFunction
+	vtkSmartPointer<vtkGPUVolumeRayCastMapper> volumeMapper =
+		vtkSmartPointer<vtkGPUVolumeRayCastMapper>::New();
+	volumeMapper->SetInputConnection(reader->GetOutputPort());
 
 
 	//设置光线采样距离--纵向采样距离
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
 
 	vtkSmartPointer<vtkRenderWindow> renWin = vtkSmartPointer<vtkRenderWindow>::New();
 	renWin->AddRenderer(ren);
-	renWin->SetSize(640, 480);
+	renWin->SetSize(300, 300);
 	renWin->Render();
 	renWin->SetWindowName("VolumeRenderingApp");
 
