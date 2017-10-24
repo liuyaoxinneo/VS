@@ -42,11 +42,12 @@ int main(int argc, char *argv[])
 		{
 			double xbuf = i*a*cos(angle*pi / 180) / 604;
 			double ybuf = i*a*sin(angle*pi / 180) / 604;
-			points->InsertNextPoint(ybuf,ny-1-xbuf, 0);//每一次InsertNextPoint()之后，返回每个点的ID
+			points->InsertNextPoint(ybuf,ny-1-xbuf, 0);//每一次InsertNextPoint()之后，返回每个点的ID,从0开始
 		}
 	}
 	//至此，生成18755个有坐标的点集
 
+	//生成多边形数据，将坐标点
 	vtkSmartPointer<vtkPolyData> polydata =
 		vtkSmartPointer<vtkPolyData>::New();
 	polydata->SetPoints(points);
@@ -66,10 +67,7 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < 18755; i++)
 	{
 		weight->SetValue(i, input[i]);
-	}
-	//polydata->GetPointData()->
-
-
+	}	
 
 	//vertex的功能是将每个cell都变为vertex的样式
 	vtkSmartPointer<vtkVertexGlyphFilter> glyphFilter = vtkSmartPointer<vtkVertexGlyphFilter>::New();
