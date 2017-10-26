@@ -103,8 +103,8 @@ int main(int argc, char *argv[])
 	vtkSmartPointer<vtkPolyDataMapper> mapper =
 		vtkSmartPointer<vtkPolyDataMapper>::New();
 	mapper->SetInputData(polygonPolyData);
-	//mapper->SetScalarModeToUseCellData();
-	//mapper->SetScalarModeToUsePointFieldData();
+	//mapper->SetScalarModeToUseCellData();//此命令开启，用cells的颜色绘图
+	//mapper->SetScalarModeToUsePointFieldData();//以下四条命令开启，用Field的设置绘图
 	//mapper->ColorByArrayComponent("Field", 0);
 	//mapper->SelectColorArray("Field");
 	//mapper->SetScalarRange(1,5);
