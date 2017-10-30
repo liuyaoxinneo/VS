@@ -1,3 +1,7 @@
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkRenderingOpenGL2);
+VTK_MODULE_INIT(vtkInteractionStyle);
+
 #include <vtkSmartPointer.h>
 #include <vtkImageData.h>
 #include <vtkStructuredPoints.h>
@@ -43,14 +47,14 @@ int main(int argc, char *argv[])
 	//rayCastFun->SetIsoValue(100);
 
 	//1:非GPU加速
-	vtkSmartPointer<vtkVolumeRayCastMapper> volumeMapper =
-		vtkSmartPointer<vtkVolumeRayCastMapper>::New();
-	volumeMapper->SetInputConnection(reader->GetOutputPort());
-	volumeMapper->SetVolumeRayCastFunction(rayCastFun);
-	//2：GPU加速的光线投影--不用设置SetVolumeRayCastFunction
-	//vtkSmartPointer<vtkGPUVolumeRayCastMapper> volumeMapper =
-	//	vtkSmartPointer<vtkGPUVolumeRayCastMapper>::New();
+	//vtkSmartPointer<vtkVolumeRayCastMapper> volumeMapper =
+	//	vtkSmartPointer<vtkVolumeRayCastMapper>::New();
 	//volumeMapper->SetInputConnection(reader->GetOutputPort());
+	//volumeMapper->SetVolumeRayCastFunction(rayCastFun);
+	//2：GPU加速的光线投影--不用设置SetVolumeRayCastFunction
+	vtkSmartPointer<vtkGPUVolumeRayCastMapper> volumeMapper =
+		vtkSmartPointer<vtkGPUVolumeRayCastMapper>::New();
+	volumeMapper->SetInputConnection(reader->GetOutputPort());
 
 
 	//设置光线采样距离--纵向采样距离

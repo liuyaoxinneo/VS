@@ -1,3 +1,6 @@
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkRenderingOpenGL2);
+VTK_MODULE_INIT(vtkInteractionStyle);
 #include <vtkSmartPointer.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
@@ -56,15 +59,16 @@ int main(int, char *[])
 	//以下，读入18755个点的强度值
 	int n = 0;
 	FILE*fp;
-	int buffer;
+	//int buffer;
 	fp = fopen("../data1.txt", "r");//以只读方式打开
 	while (!feof(fp))
 	{	
 		fscanf(fp, "%d", &input[n]);
+		printf("%d ",input[n]);
 		n++;
-		//printf("%d ",input[n]);
 	}
 	fclose(fp);
+	n = 0;
 
 	vtkSmartPointer<vtkDoubleArray> weights = vtkSmartPointer<vtkDoubleArray>::New();
 	weights->SetNumberOfValues(length);
@@ -75,7 +79,7 @@ int main(int, char *[])
 
 	//以上三部分数据组合成一个结构
 	vtkSmartPointer<vtkUnstructuredGrid> grid = vtkSmartPointer<vtkUnstructuredGrid>::New();
-	//grid->Allocate(1,1);
+	grid->Allocate(1,1);
 	grid->SetPoints(points);//设置对应的点集
 	grid->GetPointData()->SetScalars(weights);//设置对应的属性值
 	grid->InsertNextCell(vertexs->GetCellType(), vertexs->GetPointIds());//设置单元类型
@@ -104,6 +108,7 @@ int main(int, char *[])
 	mapper->SetLookupTable(lut);
 	mapper->ScalarVisibilityOn();
 
+	//致命错误出现在一下三行中的actor
 	vtkSmartPointer<vtkActor> actor =
 		vtkSmartPointer<vtkActor>::New();
 	actor->SetMapper(mapper);

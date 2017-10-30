@@ -40,5 +40,5 @@ int main(int argc, char* argv[])
 
 	renderWindowInteractor->Start();
 
-	return EXIT_SUCCESS;
+	return 0;
 }

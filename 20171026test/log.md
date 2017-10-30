@@ -42,8 +42,28 @@ mapper->SetLookupTable(lut);
 ```
 
 ---
+##1.5. SeriesReading：尝试读取图像序列
+在20171016/4.2的基础上修改
+
++20171017/1的体绘制模块 能否实现读取二维图像生成三维数据场的体绘制？？？
+
+---
+
 ##2. VolumeDataGenerate：生成体数据文件
+在20171026/Attribute的源码上修改
+
+生成的.vtk文件由**VolumeRendering**读取检验是否生成正确
+
 参考类：vtkStructuredGridWruter / vtkUnstructuredGridWruter
 
+**一再出现错误：0x00007FF720332EB1 处(位于 Attribute.exe 中)引发的异常: 0xC0000005: 读取位置 0x0000000000000000 时发生访问冲突。导致无法继续！！**
 
+只能在笔记本上继续接下来的编程
+
+###已实现：
+1.
+---
 ##3. ##VolumeRendering：读取体数据文件实现RayCast方法的体绘制
+在20171017/1的源码上修改
+
+检验2生成的体数据文件是否正确
