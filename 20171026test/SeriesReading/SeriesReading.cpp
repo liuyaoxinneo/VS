@@ -1,3 +1,7 @@
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkRenderingOpenGL2);
+VTK_MODULE_INIT(vtkInteractionStyle);
+
 #include <vtkSmartPointer.h>
 #include <vtkJPEGReader.h>
 #include <vtkImageViewer2.h>
@@ -15,7 +19,7 @@ int main()
 	char fileName[128];
 	for (int i = 1; i < 100; i++)
 	{
-		sprintf(fileName, "../data/Head/head%03d.jpg", i);
+		sprintf(fileName, "../Head/head%03d.jpg", i);
 		vtkStdString::StdString filestr(fileName);
 		fileArray->InsertNextValue(filestr);
 	}
