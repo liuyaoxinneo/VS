@@ -23,6 +23,7 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include <vtkImageData.h>
 #include <vtkUnsignedCharArray.h>
 
+
 #include <fstream>
 #include <iostream>
 
@@ -36,30 +37,30 @@ int input[18755];
 
 int main(int, char *[])
 {
-	//几何数据：创建点集数据的坐标点
-	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-	for (int p = 0; p < 31; p++)
-	{
-		angle = p + 30;
-		for (int q = 0; q < 605; q++)
-		{
-			double xbuf = a*q*cos(angle*pi / 180)/604;
-			double ybuf = a*q*sin(angle*pi / 180)/604;
-			points->InsertNextPoint(ceil(xbuf), ceil(ybuf), 0);//每一次InsertNextPoint()之后，返回每个点在点集points中的ID,从0开始
-		}
-	}
+	////几何数据：创建点集数据的坐标点
+	//vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+	//for (int p = 0; p < 31; p++)
+	//{
+	//	angle = p + 30;
+	//	for (int q = 0; q < 605; q++)
+	//	{
+	//		double xbuf = a*q*cos(angle*pi / 180)/604;
+	//		double ybuf = a*q*sin(angle*pi / 180)/604;
+	//		points->InsertNextPoint(ceil(xbuf), ceil(ybuf), 0);//每一次InsertNextPoint()之后，返回每个点在点集points中的ID,从0开始
+	//	}
+	//}
 
-	//拓扑数据：拓扑构型为点(vertex)
-	vtkSmartPointer<vtkVertex> vertexs = vtkSmartPointer<vtkVertex>::New();
-	vertexs->GetPointIds()->SetNumberOfIds(length);
-	for (int n = 0; n < length; n++)
-	{
-		vertexs->GetPointIds()->SetId(n,n);//SetId(在vertexs中的ID(每个单元只需一个)，在points点集中的ID)
-	}
+	////拓扑数据：拓扑构型为点(vertex)
+	//vtkSmartPointer<vtkVertex> vertexs = vtkSmartPointer<vtkVertex>::New();
+	//vertexs->GetPointIds()->SetNumberOfIds(length);
+	//for (int n = 0; n < length; n++)
+	//{
+	//	vertexs->GetPointIds()->SetId(n,n);//SetId(在vertexs中的ID(每个单元只需一个)，在points点集中的ID)
+	//}
 
-	//属性数据：准备加入点数据的标量值
-	//读入数据文件，实现强度赋值
-	//以下，读入18755个点的强度值
+	////属性数据：准备加入点数据的标量值
+	////读入数据文件，实现强度赋值
+	////以下，读入18755个点的强度值
 	int n = 0;
 	FILE*fp;
 	//int buffer;
@@ -73,33 +74,48 @@ int main(int, char *[])
 	fclose(fp);
 	n = 0;
 
-	vtkSmartPointer<vtkDoubleArray> weights = vtkSmartPointer<vtkDoubleArray>::New();
-	weights->SetNumberOfValues(length);
-	for (int j = 0; j < length; j++)
-	{
-		weights->SetValue(j, input[j]);//setvalue(在points点集中的ID，该点的属性值)
-	}
+	//vtkSmartPointer<vtkDoubleArray> weights = vtkSmartPointer<vtkDoubleArray>::New();
+	//weights->SetNumberOfValues(length);
+	//for (int j = 0; j < length; j++)
+	//{
+	//	weights->SetValue(j, input[j]);//setvalue(在points点集中的ID，该点的属性值)
+	//}
 
-	//以上三部分数据组合成一个结构
-	vtkSmartPointer<vtkUnstructuredGrid> grid = vtkSmartPointer<vtkUnstructuredGrid>::New();
-	grid->Allocate(1,1);
-	grid->SetPoints(points);//设置对应的点集
-	grid->GetPointData()->SetScalars(weights);//设置对应的属性值
-	grid->InsertNextCell(vertexs->GetCellType(), vertexs->GetPointIds());//设置单元类型
+	////以上三部分数据组合成一个结构
+	//vtkSmartPointer<vtkUnstructuredGrid> grid = vtkSmartPointer<vtkUnstructuredGrid>::New();
+	//grid->Allocate(1,1);
+	//grid->SetPoints(points);//设置对应的点集
+	//grid->GetPointData()->SetScalars(weights);//设置对应的属性值
+	//grid->InsertNextCell(vertexs->GetCellType(), vertexs->GetPointIds());//设置单元类型
 	
 
 	//定义vtkImageData类的数据
-	vtkSmartPointer<vtkInformation>info = vtkSmartPointer<vtkInformation>::New();
 	vtkSmartPointer<vtkImageData> matrix = vtkSmartPointer<vtkImageData>::New();
-	matrix->SetDimensions(10,10,10);//设定在x,y,z三个方向上的点数
+	matrix->SetDimensions(200,200,1);//设定在x,y,z三个方向上的点数,坐标范围0~n-1
 	matrix->SetSpacing(0.5,0.5,0.5);//设定三个方向上每个像素点之间的距离
 	matrix->AllocateScalars(VTK_UNSIGNED_CHAR,1);
 
+	unsigned char *ptr = (unsigned char*)matrix->GetScalarPointer();//通过访问图像数组（一维）来设置像素值
+	for (int i = 0; i<200 * 200 * 1 ; i++)
+	{
+		*ptr++ = 1;
+	}
 
-	vtkSmartPointer<vtkScalarsToColors>scalar = vtkSmartPointer<vtkScalarsToColors>::New();
-	scalar->
+	int xindex, yindex;
+	unsigned char buf;
+	for (int p = 0; p < 31; p++)
+	{
+		angle = p + 30;
+		for (int q = 0; q < 605; q++)
+		{
+			buf=input[605 * p + q];
+			xindex = ceil(a*q*cos(angle*pi / 180) / 604);
+			yindex = ceil(a*q*sin(angle*pi / 180) / 604);
+			unsigned char *coor = (unsigned char*)matrix->GetScalarPointer(xindex, yindex, 0);
+			*coor = buf;
+		}
 
-
+	}
 
 	//以下为绘图部分
 	//自定义颜色映射
@@ -108,7 +124,7 @@ int main(int, char *[])
 	lut->SetNumberOfTableValues(10);
 	lut->Build();
 	lut->SetTableValue(0, 0, 0, 0, 1);
-	lut->SetTableValue(1, 0.8900, 0.8100, 0.3400, 1);
+	lut->SetTableValue(1, 0.8900, 0.8100, 0.3400, 1);//SetTableValue(在表中的ID，R,G,B，不透明度)
 	lut->SetTableValue(2, 1.0000, 0.3882, 0.2784, 1);
 	lut->SetTableValue(3, 0.9608, 0.8706, 0.7020, 1);
 	lut->SetTableValue(4, 0.9020, 0.9020, 0.9804, 1);
@@ -120,12 +136,11 @@ int main(int, char *[])
 
 	vtkSmartPointer<vtkDataSetMapper> mapper =
 		vtkSmartPointer<vtkDataSetMapper>::New();
-	mapper->SetInputData(grid);
+	mapper->SetInputData(matrix);//grid--vtkUnstructuredGrid，matrix--vtkImageData
 	mapper->SetScalarRange(0,255);
 	mapper->SetLookupTable(lut);
 	mapper->ScalarVisibilityOn();
 
-	//致命错误出现在一下三行中的actor
 	vtkSmartPointer<vtkActor> actor =
 		vtkSmartPointer<vtkActor>::New();
 	actor->SetMapper(mapper);
