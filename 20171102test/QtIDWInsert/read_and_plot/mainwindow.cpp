@@ -7,7 +7,7 @@ int nx =700;
 int ny =700;//ny,nx的理论最佳值=a*sqrt(3)/2
 unsigned char map2[700][700];
 unsigned char input[18755];//全局变量
-unsigned char output[49000];//输出变量
+//unsigned char output[49000];//输出变量
 int tag0=1,tag1=2,tag2=3,tag3=4;
 //tag0：扇形区域内的点
 //tag1：扇形区域内初始强度值对应的点
@@ -135,7 +135,7 @@ for(int fileid=19;fileid<44;fileid++)
               }
             else
              {
-                colorMap->data()->setCell(x1Index, y1Index,300);
+                colorMap->data()->setCell(x1Index, y1Index,0);//为了VS画图，背景设置为0
                 map2[x1Index][y1Index]=0;
             }
           }
@@ -207,7 +207,7 @@ for(int fileid=19;fileid<44;fileid++)
         qDebug()<<"insert completed!";
 
         //下面输出已插值后的文件
-        QFile outfile(QString("../data_inserted/inserted_data%1.txt")
+        QFile outfile(QString("../data_ins_int/ins_int_data%1.txt")
                       .arg(fileid)
                       ,0);
         if(!outfile.open(QIODevice::WriteOnly|QIODevice::Text))
@@ -218,7 +218,7 @@ for(int fileid=19;fileid<44;fileid++)
         {
             for(int y=0;y<ny;y++)
             {
-                out<<colorMap->data()->cell(x,y)<<" "<<"\n";
+                out<<ceil(colorMap->data()->cell(x,y))<<" "<<"\n";
             }
         }
         outfile.close();

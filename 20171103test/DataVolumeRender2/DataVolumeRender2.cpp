@@ -34,6 +34,8 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include <vtkColorTransferFunction.h>
 #include <vtkVolumeRayCastMapper.h>
 
+//输出数据文件需要的头文件
+#include <vtkMetaImageWriter.h>
 
 
 #include <fstream>
@@ -47,9 +49,14 @@ int nx = 700, ny = 700;
 double angle;
 int length = 18755;
 char name[128];
+
 int begin = 19, end = 43;
-int number = 26;
+int number = 25;
+int input2[25][490000];
+
 int input[25][18755];
+
+
 
 int main(int, char *[])
 {
@@ -58,21 +65,19 @@ int main(int, char *[])
 	//以下，读入19--44这26个截面 18755个点的强度值，放入二维数组input[][]中
 	int n = 0;
 	FILE*fp;
-	for (int i = begin ; i < end+1 ; i++)
+	for (int i = begin; i < end+1; i++)
 	{
-		//sprintf(name,"../../data_inserted/inserted_data%d.txt",i);
-		sprintf(name, "../../QtIDWinsert/data_ori/data%d.txt", i);
-		fp = fopen(name, "r");//以只读方式打开
+		sprintf(name, "../../Data/data_ins_int/ins_int_data%d.txt", i);
+		fp = fopen(name, "r");
 		while (!feof(fp))
 		{
-			fscanf(fp, "%d", &input[i-19][n]);
-			//printf("%d ", input[i-19][n]);
+			fscanf(fp, "%d", &input2[i-19][n]);
 			n++;
 		}
 		fclose(fp);
 		n = 0;
 	}
-
+	printf("upload done!");
 
 	//定义vtkImageData类的数据
 	vtkSmartPointer<vtkImageData> matrix = vtkSmartPointer<vtkImageData>::New();
@@ -80,83 +85,36 @@ int main(int, char *[])
 	matrix->SetSpacing(0.5, 0.5, 0.5);//设定三个方向上每个像素点之间的距离
 	matrix->AllocateScalars(VTK_UNSIGNED_CHAR, 1);//分配内存，（数据类型，组分的数量）
 
+	//初始化操作
 	unsigned char *ptr = (unsigned char*)matrix->GetScalarPointer();//通过访问图像数组（一维）来设置像素值
 	for (int i = 0; i<nx * ny * number; i++)
 	{
 		*ptr++ = 0;
-	}//初始化操作
+	}
 
-	int xindex, yindex;
-	unsigned char buf;
+	int buf;
+	int x, y;
 	for (int n = 0; n < number; n++)
 	{
-		for (int p = 0; p < 31; p++)
+		for (int xi = 0; xi < 700; xi++)
 		{
-			angle = p + 30;
-			for (int q = 0; q < 605; q++)
+			for (int yi = 0; yi < 700; yi++)
 			{
-				buf = input[n][605 * p + q];
-				xindex = ceil(a*q*cos(angle*pi / 180) / 604);
-				yindex = ceil(a*q*sin(angle*pi / 180) / 604);
-				unsigned char *coor = (unsigned char*)matrix->GetScalarPointer(xindex, yindex, n);
+				buf = input2[n][xi * 700 + yi];
+				unsigned char *coor = (unsigned char*)matrix->GetScalarPointer(xi, yi, n);
 				*coor = buf;
 			}
 		}
 	}
 
+	//以下尝试写文件
+	vtkSmartPointer<vtkMetaImageWriter>writer = vtkSmartPointer<vtkMetaImageWriter>::New();
+	writer->SetFileName("../../Data/data_volume/focus.mhd");
+	writer->SetInputData(matrix);
+	writer->Write();
+
+
 	//以下为绘图部分
-	/*
-	1：图像堆叠的三维：面绘制
-	自定义颜色映射
-	vtkSmartPointer<vtkLookupTable> lut =
-		vtkSmartPointer<vtkLookupTable>::New();
-	lut->SetNumberOfTableValues(10);
-	lut->Build();
-	lut->SetTableValue(0, 0, 0, 0, 1);
-	lut->SetTableValue(1, 0.8900, 0.8100, 0.3400, 1);//SetTableValue(在表中的ID，R,G,B，不透明度)
-	lut->SetTableValue(2, 1.0000, 0.3882, 0.2784, 1);
-	lut->SetTableValue(3, 0.9608, 0.8706, 0.7020, 1);
-	lut->SetTableValue(4, 0.9020, 0.9020, 0.9804, 1);
-	lut->SetTableValue(5, 1.0000, 0.4900, 0.2500, 1);
-	lut->SetTableValue(6, 0.5300, 0.1500, 0.3400, 1);
-	lut->SetTableValue(7, 0.9804, 0.5020, 0.4471, 1);
-	lut->SetTableValue(8, 0.7400, 0.9900, 0.7900, 1);
-	lut->SetTableValue(9, 0.2000, 0.6300, 0.7900, 1);
-
-	vtkSmartPointer<vtkDataSetMapper> mapper =
-		vtkSmartPointer<vtkDataSetMapper>::New();
-	mapper->SetInputData(matrix);//grid--vtkUnstructuredGrid，matrix--vtkImageData
-	mapper->SetScalarRange(0, 255);
-	mapper->SetLookupTable(lut);
-	mapper->ScalarVisibilityOn();
-
-	vtkSmartPointer<vtkActor> actor =
-		vtkSmartPointer<vtkActor>::New();
-	actor->SetMapper(mapper);
-
-
-	vtkSmartPointer<vtkRenderer> renderer =
-		vtkSmartPointer<vtkRenderer>::New();
-	renderer->AddActor(actor);
-	renderer->SetBackground(1, 1, 1);
-
-	vtkSmartPointer<vtkRenderWindow> renderWindow =
-		vtkSmartPointer<vtkRenderWindow>::New();
-	renderWindow->AddRenderer(renderer);
-	renderWindow->SetSize(640, 480);
-	renderWindow->Render();
-	renderWindow->SetWindowName("Attribute");
-
-	vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
-		vtkSmartPointer<vtkRenderWindowInteractor>::New();
-	renderWindowInteractor->SetRenderWindow(renderWindow);
-
-	renderWindow->Render();
-	renderWindowInteractor->Start();
-
-	system("pause");
-	*/
-
 	//2：直接体绘制
 	vtkSmartPointer<vtkImageCast> cast = vtkSmartPointer<vtkImageCast>::New();
 	cast->SetInputData(matrix);
@@ -194,17 +152,19 @@ int main(int, char *[])
 	volumeProperty->SetDiffuse(0.6);//散射光系数
 	volumeProperty->SetSpecular(0.2);//反射光系数
 
+	//设置不透明度传输函数
 	//opacity--不透明度
 	vtkSmartPointer<vtkPiecewiseFunction> compositeOpacity =
 		vtkSmartPointer<vtkPiecewiseFunction>::New();
 	//1：直接通过添加断点来设置函数
-	compositeOpacity->AddPoint(70, 0.00);
+	compositeOpacity->AddPoint(10, 0.00);
+	compositeOpacity->AddPoint(70, 0.10);
 	compositeOpacity->AddPoint(90, 0.40);//AddPoint(x,y),x--自变量，灰度值，y--映射值，不透明度
 	compositeOpacity->AddPoint(180, 0.60);//compositeOpacity为一个分段函数
 	//2：直接添加一条线段，添加断点处的两个断点
 	//compositeOpacity->AddSegment(120, 0.0, 180, 0.6);//(x1,y1,x2,y2)
 	//compositeOpacity->AddSegment(180, 0.6, 255, 1);
-	volumeProperty->SetScalarOpacity(compositeOpacity); //设置不透明度传输函数
+	volumeProperty->SetScalarOpacity(compositeOpacity); 
 
 	//测试隐藏部分数据,对比不同的设置
 	//compositeOpacity->AddPoint(120,  0.00);
@@ -218,13 +178,20 @@ int main(int, char *[])
 	volumeGradientOpacity->AddPoint(100, 1.0);
 	//volumeProperty->SetGradientOpacity(volumeGradientOpacity);//设置梯度不透明度效果对比
 
+	//设置颜色传输函数
 	vtkSmartPointer<vtkColorTransferFunction> color =
 		vtkSmartPointer<vtkColorTransferFunction>::New();
-	color->AddRGBPoint(0.000, 0.00, 0.00, 0.00);
-	color->AddRGBPoint(64.00, 1.00, 0.52, 0.30);
-	color->AddRGBPoint(190.0, 1.00, 1.00, 1.00);
-	color->AddRGBPoint(220.0, 0.20, 0.20, 0.20);
-	volumeProperty->SetColor(color);//设置颜色传输函数
+	//以下自定义颜色传输函数
+	color->AddRGBPoint(0, 0, 0, 0);
+	color->AddRGBPoint(76.5, 0, 0.10, 0.48);
+	color->AddRGBPoint(102, 0.22, 0.56, 0.44);
+	color->AddRGBPoint(127.5, 0.64, 0.8, 0.23);
+	color->AddRGBPoint(153, 0.94, 0.82, 0.12);
+	color->AddRGBPoint(178.5, 0.82, 0.49, 0.35);
+	color->AddRGBPoint(204, 0.80, 0.45, 0.19);
+	color->AddRGBPoint(229.5, 0.46, 0.29, 0.07);
+	color->AddRGBPoint(255, 0.64,0.16, 0.07); //(标量值，R/255, G/255, B/255)
+	volumeProperty->SetColor(color);
 
 	vtkSmartPointer<vtkVolume> volume =
 		vtkSmartPointer<vtkVolume>::New();
@@ -249,6 +216,7 @@ int main(int, char *[])
 	renWin->Render();
 	iren->Start();
 
+    //system("pause");
 
 	return 0;
 }

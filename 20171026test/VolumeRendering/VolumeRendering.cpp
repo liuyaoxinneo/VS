@@ -20,6 +20,7 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include <vtkImageShiftScale.h>
 #include <vtkImageCast.h>
 #include <vtkFixedPointVolumeRayCastMapper.h>
+#include <vtkMetaImageReader.h>
 
 //≤‚ ‘£∫../data/mummy.128.vtk
 int main(int argc, char *argv[])
@@ -28,6 +29,10 @@ int main(int argc, char *argv[])
 		vtkSmartPointer<vtkStructuredPointsReader>::New();
 	reader->SetFileName("../mummy.128.vtk");
 	reader->Update();
+	//vtkSmartPointer<vtkMetaImageReader> reader =
+	//	vtkSmartPointer<vtkMetaImageReader>::New();
+	//reader->SetFileName("../data_volume/focus.mhd");
+	//reader->Update();
 
 	vtkSmartPointer<vtkImageCast> cast = vtkSmartPointer<vtkImageCast>::New();
 	cast->SetInputConnection(reader->GetOutputPort());
