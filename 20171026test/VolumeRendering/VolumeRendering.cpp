@@ -25,14 +25,14 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 //≤‚ ‘£∫../data/mummy.128.vtk
 int main(int argc, char *argv[])
 {
-	vtkSmartPointer<vtkStructuredPointsReader> reader =
-		vtkSmartPointer<vtkStructuredPointsReader>::New();
-	reader->SetFileName("../mummy.128.vtk");
-	reader->Update();
-	//vtkSmartPointer<vtkMetaImageReader> reader =
-	//	vtkSmartPointer<vtkMetaImageReader>::New();
-	//reader->SetFileName("../data_volume/focus.mhd");
+	//vtkSmartPointer<vtkStructuredPointsReader> reader =
+	//	vtkSmartPointer<vtkStructuredPointsReader>::New();
+	//reader->SetFileName("../mummy.128.vtk");
 	//reader->Update();
+	vtkSmartPointer<vtkMetaImageReader> reader =
+		vtkSmartPointer<vtkMetaImageReader>::New();
+	reader->SetFileName("../data_volume/focus.mhd");
+	reader->Update();
 
 	vtkSmartPointer<vtkImageCast> cast = vtkSmartPointer<vtkImageCast>::New();
 	cast->SetInputConnection(reader->GetOutputPort());
