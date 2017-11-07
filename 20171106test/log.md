@@ -14,7 +14,10 @@
 ###问题与解决：
 * 向空白的Qt工程内添加 qcustomplot.h/.cpp时，出现许多**无法解析的外部符号**
   * 项目--属性--连接器--输入--附加依赖项中添加 **$(QTDIR)\lib\Qt5PrintSupportd.lib** 即可
+  * 也可以通过在VS内新建Qt项目时选择：print模块（会自动附加依赖项Qt5PrintSupportd.lib）
 * 在Qt Designer中对窗口部件进行修改，保存.ui文件后main.cpp中不能立刻对ui中的部件设置
   * 经过一次运行，即可进行设置，打``ui.``之后会出现可供调用的部件
 
 *至此，已能转移Qt/20170418_section_set*
+
+*实现了qcustomplot类的导入*
