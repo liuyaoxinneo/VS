@@ -9,7 +9,7 @@
 * 添加doppler的库和包含文件后，出现错误 **找不到doppler.dll文件**
 
 添加doppler库的正确步骤如下：
-1. include文件夹的加入：右击项目——属性——配置属性——C/C++——附加包含目录：添加一条目录``E:\VS-sync\20171107test\Migrate2\doppler\include``，即为include文件夹
+1. include文件夹的加入：右击项目——属性——配置属性——C/C++——常规——附加包含目录：添加一条目录``E:\VS-sync\20171107test\Migrate2\doppler\include``，即为include文件夹
 2. .dll和.lib库的加入：右击项目——属性——配置属性——链接器——常规——附加库目录：添加一项``E:\VS-sync\20171107test\Migrate2\doppler\dll``，即为dll文件夹的目录
 3. 右击项目——属性——配置属性——链接器——输入——附加依赖项，查看是否有 **Doppler_netd.lib** 项，没有要加上
 4. 项目.h文件如下设置，即，加入对 **doppler_net.h** 文件的包含 + 设置Doppler_net类，名字可以为
@@ -29,7 +29,7 @@ private:
 
 ```
 5. 最后， **要把Doppler_netd.dll和Doppler_netd.lib放入生成的.exe程序的同一目录下**
-在``..\x64\Debug``目录下
+在``..\x64\Debug``目录下（经实验，只需加入doppler_netd.dll即可）
 ---
 
 * 在成功加入doppler库之后，再加入qcustomplot类的调用，出现问题 **打不开qcustomplot.h文件**

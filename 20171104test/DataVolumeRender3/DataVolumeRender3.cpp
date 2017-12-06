@@ -34,6 +34,7 @@ VTK_MODULE_INIT(vtkInteractionStyle);
 #include <vtkPiecewiseFunction.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkVolumeRayCastMapper.h>
+#include <vtkLODProp3D.h>
 
 //输出数据文件需要的头文件
 #include <vtkMetaImageWriter.h>
@@ -85,14 +86,16 @@ int main(int, char *[])
 	volumeMapper->SetAutoAdjustSampleDistances(0);//默认为开启，方便缩放时的渲染时的缩放速度，若要设置图像采样距离则必须先关闭
 	volumeMapper->SetImageSampleDistance(0.5);//SetImageSampleDistance(x),(n=1/x^2)个像素--1条光线
 
-	//设置体绘制属性
+	//设置属性
+	//设置光照和阴影
 	vtkSmartPointer<vtkVolumeProperty> volumeProperty =
 		vtkSmartPointer<vtkVolumeProperty>::New();
 	volumeProperty->SetInterpolationTypeToLinear();
-	volumeProperty->ShadeOn();  //打开或者关闭阴影测试，默认为关闭阴影效果
-	volumeProperty->SetAmbient(0.4);//设置环境光系数
-	volumeProperty->SetDiffuse(0.6);//散射光系数
-	volumeProperty->SetSpecular(0.2);//反射光系数
+	volumeProperty->ShadeOff();//在此缺陷显示中，关闭阴影图像更亮
+	//volumeProperty->ShadeOn();  //打开或者关闭阴影测试，默认为关闭阴影效果
+	//volumeProperty->SetAmbient(0.4);//设置环境光系数
+	//volumeProperty->SetDiffuse(0.6);//散射光系数
+	//volumeProperty->SetSpecular(0.2);//反射光系数
 
 	//设置不透明度传输函数
 	//compositeOpacity为一个分段函数
@@ -140,9 +143,15 @@ int main(int, char *[])
 	volume->SetMapper(volumeMapper);
 	volume->SetProperty(volumeProperty);
 
+	//以下尝试利用vtkLODProp3D类来提高绘制速度
+	//vtkSmartPointer<vtkLODProp3D> prop =
+	//	vtkSmartPointer<vtkLODProp3D>::New();
+	//prop->AddLOD(volumeMapper,volumeProperty,10.0);
+
 	vtkSmartPointer<vtkRenderer> ren = vtkSmartPointer<vtkRenderer>::New();
 	ren->SetBackground(1.0, 1.0, 1.0);
 	ren->AddVolume(volume);
+	//ren->AddVolume(prop);
 
 	vtkSmartPointer<vtkRenderWindow> renWin = vtkSmartPointer<vtkRenderWindow>::New();
 	renWin->AddRenderer(ren);
