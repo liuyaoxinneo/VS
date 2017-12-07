@@ -52,26 +52,23 @@ char name[128];
 
 int begin = 19, end = 43;
 int number = 25;
-int input2[25][490000];
-
-int input[25][18755];
-
+int input[25][490000];
 
 
 int main(int, char *[])
 {
 	//属性数据：准备加入点数据的标量值
 	//读入数据文件，实现强度赋值
-	//以下，读入19--44这26个截面 18755个点的强度值，放入二维数组input[][]中
+	//以下，读入截面 18755个点的强度值，放入二维数组input[][]中
 	int n = 0;
 	FILE*fp;
-	for (int i = begin; i < end+1; i++)
+	for (int i = begin; i < end; i++)
 	{
 		sprintf(name, "../../Data/data_ins_int/ins_int_data%d.txt", i);
 		fp = fopen(name, "r");
 		while (!feof(fp))
 		{
-			fscanf(fp, "%d", &input2[i-19][n]);
+			fscanf(fp, "%d", &input[i-19][n]);
 			n++;
 		}
 		fclose(fp);
@@ -82,7 +79,7 @@ int main(int, char *[])
 	//定义vtkImageData类的数据
 	vtkSmartPointer<vtkImageData> matrix = vtkSmartPointer<vtkImageData>::New();
 	matrix->SetDimensions(nx, ny, number);//设定在x,y,z三个方向上的点数,坐标范围0~n-1
-	matrix->SetSpacing(0.5, 0.5, 0.5);//设定三个方向上每个像素点之间的距离
+	matrix->SetSpacing(0.5, 0.5, 1);//设定三个方向上每个像素点之间的距离
 	matrix->AllocateScalars(VTK_UNSIGNED_CHAR, 1);//分配内存，（数据类型，组分的数量）
 
 	//初始化操作
@@ -93,14 +90,13 @@ int main(int, char *[])
 	}
 
 	int buf;
-	int x, y;
 	for (int n = 0; n < number; n++)
 	{
 		for (int xi = 0; xi < 700; xi++)
 		{
 			for (int yi = 0; yi < 700; yi++)
 			{
-				buf = input2[n][xi * 700 + yi];
+				buf = input[n][xi * 700 + yi];
 				unsigned char *coor = (unsigned char*)matrix->GetScalarPointer(xi, yi, n);
 				*coor = buf;
 			}

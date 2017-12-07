@@ -21,3 +21,12 @@ QFile file("../../Data/out5.txt");
 * 只需包含默认库
 
 ##3. Display：读取数据文件的显示，用以判断程序的插值是否起作用（临时）
+
+##4. DataProcessing：Qt环境中对18755点的插值（临时）
+* 直接复制20171102/QtIDWInsert
+* ori_data_1：直接以编码器的步进作为长度单位，123个文件
+* ori_data_2：以mm为单位采集，24个文件
+
+##5. DataCombination：合并截面数据
+* 直接复制20171103/DataVolumeRender2中的.cpp/CMakeLits.txt重新编译
+* 所用数据：ori_data_2插值后的数据
