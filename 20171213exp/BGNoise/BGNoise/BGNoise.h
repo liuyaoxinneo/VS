@@ -11,8 +11,11 @@ public:
 	BGNoise(QWidget *parent = Q_NULLPTR);
 
 	public slots:
+	void initial();
 	void dataimport();
 	void nc();
+	void plot1(); 
+	void plot2();
 
 private:
 	Ui::BGNoiseClass ui;
