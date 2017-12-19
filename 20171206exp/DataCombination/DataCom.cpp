@@ -79,7 +79,7 @@ int main(int, char *[])
 	//定义vtkImageData类的数据
 	vtkSmartPointer<vtkImageData> matrix = vtkSmartPointer<vtkImageData>::New();
 	matrix->SetDimensions(nx, ny, number);//设定在x,y,z三个方向上的点数,坐标范围0~n-1
-	matrix->SetSpacing(0.5, 0.5, 0.75);//设定三个方向上每个像素点之间的距离
+	matrix->SetSpacing(0.5, 0.5, 0.5);//设定三个方向上每个像素点之间的距离
 	matrix->AllocateScalars(VTK_UNSIGNED_CHAR, 1);//分配内存，（数据类型，组分的数量）
 
 	//初始化操作
@@ -105,7 +105,7 @@ int main(int, char *[])
 
 	//以下尝试写文件
 	vtkSmartPointer<vtkMetaImageWriter>writer = vtkSmartPointer<vtkMetaImageWriter>::New();
-	writer->SetFileName("../../Data/volume_data/scan.mhd");
+	writer->SetFileName("../../Data/volume_data/scan2.mhd");
 	writer->SetInputData(matrix);
 	writer->Write();
 
